@@ -1,1 +1,201 @@
-
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111018">
+  <meta name="description" content="Абсурдные дилеммы. Выбирай свою судьбу.">
+  <title>Ну и выбор — дилеммы без хорошего выхода</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#111018; --panel:#1b1925; --panel2:#242130; --text:#f8f6ff; --muted:#a8a4b6; --pink:#ff4fa3; --lime:#d6ff5f; --purple:#9b7bff; --line:#383346; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--text); background:radial-gradient(ellipse at 15% 0%,#32204b 0,transparent 35%),radial-gradient(ellipse at 100% 30%,#321b39 0,transparent 28%),var(--bg); font-family:Manrope,system-ui,sans-serif; }
+    button { font:inherit; cursor:pointer; }
+    .app { width:min(100%,680px); margin:0 auto; padding:calc(16px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom)); min-height:100dvh; display:flex; flex-direction:column; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:22px; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:-.7px; font-size:18px; }
+    .logo { width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:var(--lime);color:#17151d;font-size:23px;transform:rotate(-7deg);box-shadow:4px 4px 0 var(--pink); }
+    .pill { border:1px solid var(--line); border-radius:999px; padding:8px 11px; color:var(--muted); font-size:11px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; white-space:nowrap; }
+    .hero { margin-bottom:18px; }
+    .eyebrow { color:var(--lime); font-size:11px; font-weight:900; letter-spacing:2px; text-transform:uppercase; }
+    h1 { font-size:clamp(31px,8vw,52px); line-height:.99; letter-spacing:-2.3px; margin:8px 0 10px; font-weight:900; }
+    h1 .accent { color:var(--pink); }
+    .sub { color:var(--muted); font-size:13px; line-height:1.55; max-width:450px; margin:0; }
+    .meta { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:20px 0 12px; }
+    .category { color:var(--lime); font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1.1px; }
+    .round { color:var(--muted); font-size:12px; font-weight:700; }
+    .question { background:linear-gradient(135deg,#29243a,#1d1a28); border:1px solid #40364e; border-radius:22px; padding:20px; position:relative; overflow:hidden; }
+    .question:after { content:"?"; position:absolute; right:12px; top:-26px; font-size:130px; font-weight:900; color:#ffffff06; transform:rotate(9deg); pointer-events:none; }
+    h2 { margin:0 0 9px; font-size:clamp(21px,5.4vw,29px); line-height:1.12; letter-spacing:-.8px; position:relative; z-index:1; }
+    .setup { margin:0; color:#c7c2d4; font-size:14px; line-height:1.55; position:relative; z-index:1; }
+    .choices { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+    .choice { border:1px solid var(--line); border-radius:20px; padding:16px 14px; text-align:left; color:var(--text); background:var(--panel); min-height:245px; display:flex; flex-direction:column; gap:10px; transition:transform .15s,border-color .15s,background .15s; position:relative; overflow:hidden; }
+    .choice:active { transform:scale(.985); }
+    .choice.a { border-top:3px solid var(--pink); }
+    .choice.b { border-top:3px solid var(--lime); }
+    .choice:hover { background:var(--panel2); border-color:#77708b; }
+    .choice-letter { display:flex; justify-content:space-between; align-items:center; font-size:10px; letter-spacing:1.3px; font-weight:900; color:var(--muted); text-transform:uppercase; }
+    .choice-emoji { font-size:22px; }
+    .choice-title { font-weight:900; line-height:1.2; font-size:16px; letter-spacing:-.4px; }
+    .benefit { font-size:12px; line-height:1.45; color:#e7e2f0; }
+    .benefit b { color:var(--lime); display:block; font-size:9px; letter-spacing:1.2px; margin-bottom:4px; }
+    .cost { font-size:12px; line-height:1.45; color:#c0bacd; padding-top:10px; border-top:1px dashed #484153; margin-top:auto; }
+    .cost b { color:var(--pink); display:block; font-size:9px; letter-spacing:1.2px; margin-bottom:4px; }
+    .picked { border-color:var(--lime)!important; box-shadow:0 0 0 2px #d6ff5f22; }
+    .result { display:none; margin-top:12px; border-radius:16px; padding:15px 16px; background:#252332; border:1px solid #514766; }
+    .result.show { display:block; animation:pop .2s ease-out; }
+    .result h3 { margin:0 0 5px; font-size:15px; }
+    .result p { margin:0; color:var(--muted); font-size:12px; line-height:1.5; }
+    .result-actions { display:flex; gap:9px; margin-top:12px; }
+    .primary,.secondary { border:0; border-radius:14px; padding:14px 16px; font-size:13px; font-weight:900; }
+    .primary { background:var(--lime); color:#17151d; flex:1; box-shadow:0 4px 0 #93b82f; }
+    .primary:disabled { opacity:.55; cursor:wait; }
+    .secondary { background:#302b3d; color:var(--text); border:1px solid var(--line); }
+    .bottom { display:flex; justify-content:space-between; gap:10px; margin-top:auto; padding-top:24px; color:#716c80; font-size:10px; font-weight:700; }
+    .bottom button { background:none;border:0;color:var(--muted);padding:0;font-size:11px;font-weight:800; }
+    .stats { display:none; margin-top:12px; padding:14px 16px; border:1px solid var(--line); background:#1b1925c9; border-radius:16px; }
+    .stats.show { display:block; }
+    .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+    .stat { background:#292536; border-radius:12px; padding:10px; }
+    .stat strong { display:block; font-size:21px; }
+    .stat span { color:var(--muted); font-size:10px; }
+    .notice { display:none; margin-top:10px; color:#e7d8a0; background:#453a1d66; border:1px solid #65552d; border-radius:12px; padding:10px 12px; font-size:11px; line-height:1.4; }
+    .notice.show { display:block; }
+    .loading { opacity:.6; pointer-events:none; }
+    @keyframes pop { from {opacity:0;transform:translateY(5px)} to {opacity:1;transform:translateY(0)} }
+    @media (max-width:440px) { .app{padding-left:13px;padding-right:13px}.choices{gap:9px}.choice{padding:13px 11px;min-height:260px;border-radius:17px}.choice-title{font-size:14px}.benefit,.cost{font-size:11px}.question{padding:17px;border-radius:19px}.brand{font-size:16px}.pill{font-size:9px} }
+    @media (max-width:350px) { .choices{grid-template-columns:1fr}.choice{min-height:0}.cost{margin-top:0} }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand"><div class="logo">?!</div><span>НУ И ВЫБОР</span></div>
+      <div class="pill" id="modePill">DEMO MODE</div>
+    </header>
+    <section class="hero">
+      <div class="eyebrow">Тест на адекватность</div>
+      <h1>Хорошего выхода<br><span class="accent">не завезли.</span></h1>
+      <p class="sub">Выбирай преимущество. Принимай последствия. Не ной — ты сам это выбрал.</p>
+    </section>
+    <div class="meta">
+      <div class="category" id="category">АБСУРД</div>
+      <div class="round" id="round">РАУНД 01</div>
+    </div>
+    <section class="question">
+      <h2 id="title">Загружаем дилемму…</h2>
+      <p class="setup" id="setup"></p>
+    </section>
+    <section class="choices" id="choices">
+      <button class="choice a" id="choiceA" aria-label="Выбрать вариант А"></button>
+      <button class="choice b" id="choiceB" aria-label="Выбрать вариант Б"></button>
+    </section>
+    <section class="result" id="result" aria-live="polite">
+      <h3 id="resultTitle">Выбор сделан. Назад дороги нет.</h3>
+      <p id="resultText"></p>
+      <div class="result-actions">
+        <button class="primary" id="nextBtn">ЕЩЁ ДИЛЕММУ →</button>
+        <button class="secondary" id="shareBtn">↗</button>
+      </div>
+    </section>
+    <div class="notice" id="notice"></div>
+    <section class="stats" id="stats">
+      <strong>Твоя статистика позора</strong>
+      <div class="stats-grid">
+        <div class="stat"><strong id="statTotal">0</strong><span>выборов</span></div>
+        <div class="stat"><strong id="statA">0</strong><span>вариантов А</span></div>
+        <div class="stat"><strong id="statB">0</strong><span>вариантов Б</span></div>
+      </div>
+    </section>
+    <div class="bottom">
+      <span>БЕЗ ХОРОШИХ РЕШЕНИЙ ©</span>
+      <div style="display:flex;gap:14px"><button id="statsBtn">СТАТИСТИКА</button><button id="resetBtn">СБРОС</button></div>
+    </div>
+  </main>
+<script>
+const $ = (id) => document.getElementById(id);
+let current = null, round = 1, selected = null, mode = "demo";
+let seen = JSON.parse(localStorage.getItem("nivy_seen") || "[]");
+let history = JSON.parse(localStorage.getItem("nivy_history") || "[]");
+const demo = [
+  {id:"local-1",title:"Твой кот становится гением",setup:"Он понимает экономику, философию и квантовую физику — и каждое утро объясняет, почему ты живёшь неправильно.",a:{label:"Личный консультант",benefit:"Любая сложная проблема решается за пять минут.",cost:"Каждый совет заканчивается: «Я бы на твоём месте хотя бы не ел так позорно»."},b:{label:"Оставить всё как есть",benefit:"Дома по-прежнему спокойно, уютно и никто не критикует твою жизнь.",cost:"Ты узнаёшь, что кот способен говорить, но лично с тобой принципиально молчит."},category:"Абсурд",spice:3},
+  {id:"local-2",title:"Ты можешь выиграть любой спор",setup:"Даже если ты несёшь полную чушь, собеседник в итоге признаёт твою правоту.",a:{label:"Побеждать всегда",benefit:"Никто больше не выставит тебя идиотом в дискуссии.",cost:"После каждой победы хор пенсионеров поёт гимн твоей неправоте."},b:{label:"Всегда знать ответ",benefit:"Ты больше никогда не ошибаешься в фактах.",cost:"Когда открываешь рот, звучит заставка документального фильма о том, как скучно с тобой общаться."},category:"Социальный позор",spice:2},
+  {id:"local-3",title:"Твой двойник берёт смены на себя",setup:"Он может выполнять за тебя любую бытовую задачу, пока ты отдыхаешь.",a:{label:"Скинуть ему всю рутину",benefit:"У тебя появляется бесконечно много свободного времени.",cost:"Он выкладывает ваши совместные фото с подписью «Опять тащу этого бездельника»."},b:{label:"Отправлять его на встречи",benefit:"Больше никаких неловких разговоров и обязательных мероприятий.",cost:"Он настолько обаятельный, что друзья начинают приглашать только его."},category:"Жизненный хаос",spice:2}
+];
+function escapeHTML(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function drawChoice(side,letter,emoji){
+  return `<div class="choice-letter"><span>ВАРИАНТ ${letter}</span><span class="choice-emoji">${emoji}</span></div>
+    <div class="choice-title">${escapeHTML(side.label)}</div>
+    <div class="benefit"><b>ТЫ ПОЛУЧАЕШЬ</b>${escapeHTML(side.benefit)}</div>
+    <div class="cost"><b>НО ЕСТЬ НЮАНС</b>${escapeHTML(side.cost)}</div>`;
+}
+function render(d){
+  current=d; selected=null;
+  $("title").textContent=d.title; $("setup").textContent=d.setup;
+  $("category").textContent=(d.category||"Абсурд").toUpperCase();
+  $("round").textContent="РАУНД "+String(round).padStart(2,"0");
+  $("choiceA").innerHTML=drawChoice(d.a,"А","💀");
+  $("choiceB").innerHTML=drawChoice(d.b,"Б","🤡");
+  $("choiceA").classList.remove("picked"); $("choiceB").classList.remove("picked");
+  $("choiceA").disabled=false; $("choiceB").disabled=false;
+  $("result").classList.remove("show"); $("notice").classList.remove("show");
+}
+function pick(which){
+  if(selected||!current)return;
+  selected=which;
+  const side=which==="a"?current.a:current.b;
+  $("choice"+which.toUpperCase()).classList.add("picked");
+  $("choice"+(which==="a"?"B":"A")).disabled=true;
+  $("resultTitle").textContent=which==="a"?"Ты выбрал вариант А. Смело. Сомнительно.":"Ты выбрал вариант Б. Смело. Сомнительно.";
+  $("resultText").textContent="Твой выбор: "+side.label+". "+side.benefit+" Цена вопроса: "+side.cost;
+  $("result").classList.add("show");
+  history.push({id:current.id,title:current.title,choice:which,label:side.label,category:current.category||"Абсурд"});
+  seen.push({id:current.id,title:current.title,summary:current.setup});
+  history=history.slice(-300);seen=seen.slice(-100);
+  localStorage.setItem("nivy_history",JSON.stringify(history));localStorage.setItem("nivy_seen",JSON.stringify(seen));
+  updateStats();
+}
+function updateStats(){
+  $("statTotal").textContent=history.length;
+  $("statA").textContent=history.filter(x=>x.choice==="a").length;
+  $("statB").textContent=history.filter(x=>x.choice==="b").length;
+}
+async function next(){
+  $("nextBtn").disabled=true;$("nextBtn").textContent="ПРИДУМЫВАЕМ…";
+  $("choices").classList.add("loading");
+  try{
+    const response=await fetch("/api/dilemma",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({seen:seen.map(x=>x.title+" — "+x.summary).slice(-12)})});
+    if(!response.ok)throw new Error("server");
+    const data=await response.json();
+    if(data.notice)showNotice(data.notice);
+    mode=data.mode||"ai";$("modePill").textContent=mode==="ai"?"ИИ ГЕНЕРИРУЕТ":"DEMO MODE";
+    render(data);round++;
+  }catch(e){
+    const pool=demo.filter(d=>!seen.some(s=>s.id===d.id));
+    const d=pool.length?pool[Math.floor(Math.random()*pool.length)]:demo[Math.floor(Math.random()*demo.length)];
+    render(d);round++;mode="local";$("modePill").textContent="LOCAL DEMO";
+    showNotice("Сервер генерации недоступен. Показана демонстрационная дилемма.");
+  }finally{$("nextBtn").disabled=false;$("nextBtn").textContent="ЕЩЁ ДИЛЕММУ →";$("choices").classList.remove("loading");}
+}
+function showNotice(msg){$("notice").textContent=msg;$("notice").classList.add("show");}
+$("choiceA").addEventListener("click",()=>pick("a"));
+$("choiceB").addEventListener("click",()=>pick("b"));
+$("nextBtn").addEventListener("click",next);
+$("shareBtn").addEventListener("click",async()=>{
+  const text=`Ну и выбор: ${current.title}\n${current.setup}\nА) ${current.a.label}: ${current.a.benefit} Но: ${current.a.cost}\nБ) ${current.b.label}: ${current.b.benefit} Но: ${current.b.cost}`;
+  try{if(navigator.share)await navigator.share({title:"Ну и выбор",text});else{await navigator.clipboard.writeText(text);showNotice("Дилемма скопирована.");}}catch(e){}
+});
+$("statsBtn").addEventListener("click",()=>$("stats").classList.toggle("show"));
+$("resetBtn").addEventListener("click",()=>{if(confirm("Точно стереть всю статистику?")){history=[];seen=[];localStorage.removeItem("nivy_history");localStorage.removeItem("nivy_seen");updateStats();showNotice("Статистика сброшена. Ты снова чистый лист.");}});
+updateStats();
+(async()=>{
+  try{const r=await fetch("/api/health");const h=await r.json();mode=h.mode||"demo";$("modePill").textContent=mode==="ai"?"ИИ ГЕНЕРИРУЕТ":"DEMO MODE";}
+  catch(e){$("modePill").textContent="LOCAL DEMO";}
+  const d=demo[Math.floor(Math.random()*demo.length)];render(d);
+})();
+</script>
+</body>
+  </html>
